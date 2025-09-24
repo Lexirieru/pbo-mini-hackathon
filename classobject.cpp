@@ -48,7 +48,6 @@ private:
     
 public:
     void add_student(int id, const string& name) {
-        // Check if student already exists
         if (id_to_index.find(id) == id_to_index.end()) {
             students.push_back(Student(id, name));
             id_to_index[id] = students.size() - 1;
@@ -56,7 +55,6 @@ public:
     }
     
     void add_grade(int id, int grade) {
-        // Check if student exists
         if (id_to_index.find(id) != id_to_index.end()) {
             int index = id_to_index[id];
             students[index].add_grade(grade);
@@ -64,35 +62,21 @@ public:
     }
     
     void show_sum(int id) {
-        // Check if student exists and has grades
         if (id_to_index.find(id) != id_to_index.end()) {
             int index = id_to_index[id];
             if (students[index].has_grades()) {
-                cout << "    Hasil: " << students[index].get_name() << ": " << students[index].calculate_sum() << endl;
-            } else {
-                cout << "    Hasil: Mahasiswa ID " << id << " belum memiliki nilai" << endl;
+                cout << students[index].get_name() << ": " << students[index].calculate_sum() << endl;
             }
-        } else {
-            cout << "    Hasil: Mahasiswa ID " << id << " tidak ditemukan" << endl;
         }
     }
     
     void list_all_students() {
-        if (students.empty()) {
-            cout << "    Hasil: Belum ada mahasiswa yang terdaftar" << endl;
-            return;
-        }
-        
-        bool has_students_with_grades = false;
         for (const Student& student : students) {
             if (student.has_grades()) {
-                cout << "    " << student.get_name() << ": " << student.calculate_sum() << endl;
-                has_students_with_grades = true;
+                cout << student.get_name() << ": " << student.calculate_sum() << endl;
+            } else {
+                cout << student.get_name() << endl;
             }
-        }
-        
-        if (!has_students_with_grades) {
-            cout << "    Hasil: Belum ada mahasiswa yang memiliki nilai" << endl;
         }
     }
 };
@@ -100,17 +84,12 @@ public:
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
-    
-    cout << "=== SISTEM MANAJEMEN NILAI MAHASISWA ===" << endl;
-    cout << "Masukkan jumlah operasi: ";
     int Q;
     cin >> Q;
-    cout << "Masukkan " << Q << " operasi (ADD, GRADE, SUM, LIST):" << endl;
     
     GradeManager manager;
     
     for (int i = 0; i < Q; i++) {
-        cout << "Operasi " << (i+1) << ": ";
         string operation;
         cin >> operation;
         
@@ -118,30 +97,24 @@ int main() {
             int id;
             string name;
             cin >> id >> name;
-            cout << "  -> Menambahkan mahasiswa ID " << id << " dengan nama " << name << endl;
             manager.add_student(id, name);
         }
         else if (operation == "GRADE") {
             int id, grade;
             cin >> id >> grade;
-            cout << "  -> Menambahkan nilai " << grade << " untuk mahasiswa ID " << id << endl;
             manager.add_grade(id, grade);
         }
         else if (operation == "SUM") {
             int id;
             cin >> id;
-            cout << "  -> Menampilkan total nilai mahasiswa ID " << id << ":" << endl;
             manager.show_sum(id);
         }
         else if (operation == "LIST") {
-            cout << "  -> Menampilkan daftar semua mahasiswa:" << endl;
             manager.list_all_students();
         }
         else {
-            cout << "  -> Operasi tidak valid: " << operation << endl;
         }
     }
     
-    cout << "\n=== PROGRAM SELESAI ===" << endl;
     return 0;
 }
