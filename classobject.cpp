@@ -1,120 +1,110 @@
 // 24/540550/TK/60008
 // 24/545465/TK/60670
-
 #include <iostream>
-#include <string>
-#include <vector>
 #include <map>
+#include <vector>
+
 using namespace std;
 
 class Student {
 private:
-    int id;
-    string name;
+    string id, nama;
     vector<int> grades;
+    int sumGrades;
 public:
-    Student(int student_id, const string& student_name)
-        : id(student_id), name(student_name) {}
+    Student() : id(""), nama(""), sumGrades(0) {}  // default constructor
+    Student(string id, string nama) : id(id), nama(nama), sumGrades(0) {}
     
-    int get_id() const {
-        return id;
-    }
-    
-    string get_name() const {
-        return name;
-    }
-    
-    void add_grade(int grade) {
+    void addGrade(int grade) {      
         grades.push_back(grade);
+        sumGrades += grade;
     }
+    int getSumGrades() const { 
     
-    double calculate_sum() const {
-        int sum = 0;
-        for (int grade : grades) {
-            sum += grade;
-        }
-        return sum;
+        return sumGrades; 
     }
-    
-    bool has_grades() const {
-        return !grades.empty();
+    string getId() const { 
+        return id; 
+    }
+    string getNama() const { 
+        return nama; 
     }
 };
 
 class GradeManager {
 private:
-    vector<Student> students;
-    map<int, int> id_to_index;
-    
+    map<string, Student> students;
 public:
-    void add_student(int id, const string& name) {
-        if (id_to_index.find(id) == id_to_index.end()) {
-            students.push_back(Student(id, name));
-            id_to_index[id] = students.size() - 1;
+    void addStudent(const string& id, const string& nama) {
+        if (students.find(id) == students.end()) {
+            students[id] = Student(id, nama);
         }
     }
-    
-    void add_grade(int id, int grade) {
-        if (id_to_index.find(id) != id_to_index.end()) {
-            int index = id_to_index[id];
-            students[index].add_grade(grade);
+    void addGrade(const string& id, int grade) {
+        if (students.find(id) != students.end() && grade >= 0 && grade <= 100) {
+            students[id].addGrade(grade);
         }
     }
-    
-    void show_sum(int id) {
-        if (id_to_index.find(id) != id_to_index.end()) {
-            int index = id_to_index[id];
-            if (students[index].has_grades()) {
-                cout << students[index].get_name() << ": " << students[index].calculate_sum() << endl;
-            }
+    int getSumGrades(const string& id) const {
+        if (students.find(id) != students.end()) {
+            return students.at(id).getSumGrades();
+        }
+        return -1; // Indicate student not found
+    }
+    void listStudents() const {
+        for (const auto& pair : students) {
+                cout << pair.second.getNama() << ": " << pair.second.getSumGrades() << "\n";
+
         }
     }
-    
-    void list_all_students() {
-        for (const Student& student : students) {
-            if (student.has_grades()) {
-                cout << student.get_name() << ": " << student.calculate_sum() << endl;
-            } else {
-                cout << student.get_name() << endl;
-            }
+    string getStudentName(const string& id) const {
+        if (students.find(id) != students.end()) {
+            return students.at(id).getNama();
         }
+        return "";
     }
 };
+// implementasikan atribut yang diperlukan
+//implementasikan konstruktor dan metode yang diperlukan
 
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
     int Q;
     cin >> Q;
-    
-    GradeManager manager;
-    
+    GradeManager gm;
     for (int i = 0; i < Q; i++) {
+        // 8
+        // ADD 1 Alice
+        // ADD 2 Bob
+        // GRADE 1 85
+        // GRADE 1 90
+        // GRADE 2 75
+        // SUM 1
+        // LIST
+        // SUM 3
         string operation;
         cin >> operation;
-        
         if (operation == "ADD") {
-            int id;
-            string name;
-            cin >> id >> name;
-            manager.add_student(id, name);
-        }
-        else if (operation == "GRADE") {
-            int id, grade;
+            string id, nama;
+            cin >> id >> nama;
+            gm.addStudent(id, nama);
+        } else if (operation == "GRADE") {
+            string id;
+            int grade;
             cin >> id >> grade;
-            manager.add_grade(id, grade);
-        }
-        else if (operation == "SUM") {
-            int id;
+            gm.addGrade(id, grade);
+        } else if (operation == "SUM") {
+            string id;
             cin >> id;
-            manager.show_sum(id);
-        }
-        else if (operation == "LIST") {
-            manager.list_all_students();
-        }
-        else {
+            int sum = gm.getSumGrades(id);
+            if (sum > 0) {
+                cout << gm.getStudentName(id) << ": " << sum << "\n";
+            }
+
+        } else if (operation == "LIST") {
+            gm.listStudents();
         }
     }
-    
     return 0;
 }

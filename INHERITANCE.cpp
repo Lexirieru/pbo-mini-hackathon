@@ -1,5 +1,5 @@
-//
 // 24/540550/TK/60008
+// 24/545465/TK/60670
 
 #include <iostream>
 #include <string>
@@ -20,33 +20,33 @@ public:
         return name;
     }
 
-    virtual int salary() const = 0;
+    virtual long long salary() const = 0;
 };
 
 class FullTime : public Employee {
 private:
-    int baseSalary;
-    int bonus;
+    long long baseSalary;
+    long long bonus;
 
 public:
-    FullTime(const std::string& n, int base, int b) 
+    FullTime(const std::string& n, long long base, long long b) 
         : Employee(n), baseSalary(base), bonus(b) {}
 
-    int salary() const override {
+    long long salary() const override {
         return baseSalary + bonus;
     }
 };
 
 class PartTime : public Employee {
 private:
-    int hourlyRate;
-    int hours;
+    long long hourlyRate;
+    long long hours;
 
 public:
-    PartTime(const string& n, int rate, int h)
+    PartTime(const string& n, long long rate, long long h)
         : Employee(n), hourlyRate(rate), hours(h) {}
 
-    int salary() const override {
+    long long salary() const override {
         return hourlyRate * hours;
     }
 };
@@ -62,11 +62,11 @@ int main() {
         cin >> type;
 
         if (type == "FULLTIME") {
-            int base, bonus;
+            long long base, bonus;
             cin >> name >> base >> bonus;
             employees.push_back(make_unique<FullTime>(name, base, bonus));
         } else if (type == "PARTTIME") {
-            int rate, hours;
+            long long rate, hours;
             cin >> name >> rate >> hours;
             employees.push_back(make_unique<PartTime>(name, rate, hours));
         }
